@@ -1,12 +1,28 @@
-name: debugger-action
-on: 
-  watch:
-    types: started
+name: debugger-action
+on:
+  push:
+    branches:
+      - master
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-     - uses: actions/checkout@v2
- 
-     - name: Setup Debug Session
-       uses: csexton/debugger-action@master
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+#      - name: Setup Debug Session
+#        uses: csexton/debugger-action@master
+
+      - name: Prepare artifact
+        run: |
+          mkdir -p ./artifact/build
+          cd artifact/build
+          touch demo.th
+          echo 123 >> demo.th
+      - name: para
+        run: echo "abc" >> demo.th & uses: csexton/debugger-action@master
+        wait
+      - name: Upload buildinfo
+        uses: actions/upload-artifact@v3
+        with:
+          name: buildinfo
+          path: ./artifact/build
